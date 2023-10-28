@@ -7,6 +7,7 @@
                 <h1 class="mt-5">Test microservices</h1>
                 <hr>
                 <a id="brockerBtn" class="btn btn-outline-secondary" href="javascript:void(0);" role="button">Test Broker</a>
+                 <a id="authBtn" class="btn btn-outline-secondary" href="javascript:void(0);" role="button">Test Auth</a>
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
                 </div>
@@ -32,7 +33,8 @@
 {{define "js"}}
     <script>
 
-    const brolerBtn = document.getElementById('brockerBtn')
+    const brockerBtn = document.getElementById('brockerBtn')
+    const authBtn = document.getElementById('authBtn')
     const output = document.getElementById('output')
     const sent = document.getElementById('payload')
     const received = document.getElementById('received')
@@ -49,6 +51,40 @@
             received.innerHTML = JSON.stringify(data, null, 2)
             if(data.error) {
                console.error(data.message)
+            }else{
+            output.innerHTML = `<br><strong>Response from brocker service</strong> ${data.message}`;
+            }
+        })
+        .catch(err => {
+            output.innerHTML = err.message
+        })
+    })  
+
+     authBtn.addEventListener('click', () => {
+        output.innerHTML = 'Loading...'
+
+        payload = {
+            action : "auth",
+            auth: {
+                email: "admin@example.com",
+                password: "verysecret!"
+            }
+        }
+
+        fetch("http:\/\/localhost:8080/handle", {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            sent.innerHTML = JSON.stringify(payload, null, 2)
+            received.innerHTML = JSON.stringify(data, null, 2)
+            if(data.error) {
+               console.error(data.message)
+               output.innerHTML = `<br><strong>Response from auth service</strong> ${data.message}`;
             }else{
             output.innerHTML = `<br><strong>Response from brocker service</strong> ${data.message}`;
             }
