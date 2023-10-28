@@ -1,4 +1,4 @@
-# base go image
+# base alpine image
 FROM alpine:latest
 
 RUN mkdir /app
