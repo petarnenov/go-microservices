@@ -33,7 +33,25 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-
+      
+  mailer-service:
+    build:
+      context: ./mail-service
+      dockerfile: ./mail-service.dockerfile
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      DOMAIN: "localhost"
+      MAIL_HOST: "mailhog"
+      MAIL_PORT: "1025"
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
+      MAIL_ENCRYPTION: ""
+      MAIL_FROM_NAME: "Joe Dow"
+      MAIL_FROM_ADDRESS: "joe.dow@gmail.com"
+     
   postgres:
     image: "postgres:14.2"
     ports:
@@ -63,3 +81,13 @@ services:
       replicas: 1
     volumes:
       - ./db-data/mongo/:/data/db/
+    
+  mailhog:
+    image: "mailhog/mailhog:latest"
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1

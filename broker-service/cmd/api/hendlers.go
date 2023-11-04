@@ -11,6 +11,14 @@ type RequestPayload struct {
 	Action string      `json:"action"`
 	Auth   AuthPayload `json:"auth,omitempty"`
 	Log    LogPayload  `json:"log,omitempty"`
+	Mail   MailPayload `json:"mail,omitempty"`
+}
+
+type MailPayload struct {
+	From    string `json:"from"`
+	To      string `json:"to"`
+	Subject string `json:"subject"`
+	Message string `json:"message"`
 }
 
 type AuthPayload struct {
@@ -45,9 +53,47 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 		app.authenticate(w, requestPayload.Auth)
 	case "log":
 		app.logItem(w, requestPayload.Log)
+	case "mail":
+		app.sendMail(w, requestPayload.Mail)
 	default:
 		app.errorJSON(w, errors.New("unknown action"), http.StatusBadRequest)
 	}
+}
+
+func (app *Config) sendMail(w http.ResponseWriter, m MailPayload) {
+	// create some json we'll send to the mail microservice
+	jsonData, _ := json.MarshalIndent(m, "", "\t")
+
+	mailServiceURL := "http://mailer-service/send"
+
+	// call the service
+	request, err := http.NewRequest("POST", mailServiceURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+	defer response.Body.Close()
+
+	// make sure we get back the correct status code
+	if response.StatusCode != http.StatusAccepted {
+		app.errorJSON(w, errors.New("error calling mail service"))
+		return
+	}
+
+	var payload jsonResponse
+	payload.Error = false
+	payload.Message = "Message send to " + m.To
+
+	app.writeJSON(w, http.StatusAccepted, payload)
 }
 
 func (app *Config) logItem(w http.ResponseWriter, l LogPayload) {
@@ -81,7 +127,7 @@ func (app *Config) logItem(w http.ResponseWriter, l LogPayload) {
 
 	// create a variable we'll read response.Body into
 	var jsonFromService jsonResponse
-	
+
 	// decode the json from the auth service
 	err = json.NewDecoder(response.Body).Decode(&jsonFromService)
 	if err != nil {
@@ -98,7 +144,7 @@ func (app *Config) logItem(w http.ResponseWriter, l LogPayload) {
 	payload.Error = false
 	payload.Message = "logged!"
 
-	app.writeJSON(w, http.StatusAccepted, payload)	
+	app.writeJSON(w, http.StatusAccepted, payload)
 }
 
 func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
