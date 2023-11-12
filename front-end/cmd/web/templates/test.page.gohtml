@@ -58,7 +58,7 @@
             }
         }
 
-        fetch("http:\/\/localhost:8080/handle", {
+        fetch("http:\/\/backend/handle", {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -93,7 +93,7 @@
             }
         }
 
-        fetch("http:\/\/localhost:8080/log-grpc", {
+        fetch("http:\/\/backend/log-grpc", {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -128,7 +128,7 @@
             }
         }
 
-        fetch("http:\/\/localhost:8080/handle", {
+        fetch("http:\/\/backend/handle", {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -154,7 +154,7 @@
     brokerBtn.addEventListener('click', () => {
         output.innerHTML = 'Loading...'
 
-        fetch("http:\/\/localhost:8080", {
+        fetch("http:\/\/backend", {
             method: 'POST'
         })
         .then(res => res.json())
@@ -183,7 +183,7 @@
             }
         }
 
-        fetch("http:\/\/localhost:8080/handle", {
+        fetch("http:\/\/backend/handle", {
             headers: {
                 'Content-Type': 'application/json'
             },

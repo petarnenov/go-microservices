@@ -7,8 +7,8 @@ services:
       dockerfile: ./broker-service.dockerfile
     image: petarnenov/broker-service:latest
     restart: always
-    ports:
-      - "8080:80"
+    # ports:
+    #   - "8080:80"
     deploy:
       mode: replicated
       replicas: 1
@@ -29,8 +29,8 @@ services:
       dockerfile: ./authentication-service.dockerfile
     image: petarnenov/authentication-service:latest
     restart: always
-    ports:
-      - "8081:80"
+    # ports:
+    #   - "8081:80"
     deploy:
       mode: replicated
       replicas: 1
@@ -119,3 +119,38 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: "guest"
       RABBITMQ_DEFAULT_PASS: "guest"
+
+  front-end-service:
+    build:
+      context: ./front-end
+      dockerfile: ./front-end-service.dockerfile
+    image: petarnenov/front-end-service:latest
+    restart: always
+    # ports:
+    #   - "8080:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  caddy:
+    build:
+      context: .
+      dockerfile: ./caddy.dockerfile
+    image: petarnenov/caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    deploy:
+      mode: replicated
+      replicas: 1
+    volumes:
+      - $PWD/Caddyfile:/etc/caddy/Caddyfile
+      - $PWD/site:/srv
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+    external: true
+  caddy_config:

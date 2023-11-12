@@ -1,10 +1,10 @@
-go 1.21.3
+go 1.21.4
 
 use (
+	./authentication-service
 	./broker-service
 	./front-end
-	./authentication-service
-	./logger-service
-	./mail-service
 	./listener-service
+    ./mail-service
+    ./logger-service
 )

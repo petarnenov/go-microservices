@@ -12,7 +12,7 @@ up:
 	@echo "Docker images started!"
 
 ## up_build: stops docker-compose (if running), builds all projects and starts docker compose
-up_build: build_broker build_authentication build_logger build_mail build_listener
+up_build: build_broker build_authentication build_logger build_mail build_listener build_front
 	@echo "Stopping docker images (if running...)"
 	docker-compose down
 	@echo "Building (when required) and starting docker images..."
@@ -68,7 +68,16 @@ build_mail:
 ## build_front: builds the front end binary
 build_front:
 	@echo "Building front end binary..."
-	cd ./front-end && env CGO_ENABLED=0 go build -o ${FRONT_END_BINARY} ./cmd/web
+	cd ./front-end && env GOOS=linux CGO_ENABLED=0 go build -o ${FRONT_END_BINARY} ./cmd/web
+	cd ./front-end && docker build -f front-end-service.dockerfile -t petarnenov/front-end-service .
+	docker push petarnenov/front-end-service
+	@echo "Done!"
+
+## build caddy
+build_caddy:
+	@echo "Building caddy..."
+	docker build -f caddy.dockerfile -t petarnenov/caddy .
+	docker push petarnenov/caddy
 	@echo "Done!"
 
 ## start: starts the front end
@@ -83,13 +92,12 @@ stop:
 	@echo "Stopped front end!"
 
 ## restart: restarts all
-restart: stop down up_build start
+restart: stop down up_build
 	@echo "Restarted all!"
 
 ## create docker swarm
 swarm_up:
 	docker swarm init
-	docker-compose up -d
 
 swarm_down:
 	docker swarm leave --force
@@ -100,3 +108,9 @@ create_proto:
 
 deploy_stack:
 	docker stack deploy --compose-file docker-compose.yaml microservices
+
+rm_stack:
+	docker stack rm microservices
+
+## docker service update --image petarnenov/front-end-service microservices_front-end-service
+
