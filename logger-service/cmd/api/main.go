@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"logger/data"
+	"net"
 	"net/http"
+	"net/rpc"
 	"time"
 
 	"github.com/petarnenov/myutils"
@@ -46,6 +48,12 @@ func main() {
 		Models: data.New(client),
 	}
 
+	//Register RPC server
+	err = rpc.Register(&RPCServer{})
+	myutils.CheckNillError(err)
+	//start the RPC server
+	go app.rpcListener()
+
 	//start the web server
 	app.serve()
 }
@@ -73,4 +81,24 @@ func connectToMongo() (*mongo.Client, error) {
 	}
 
 	return connection, nil
+}
+
+func (app *Config) rpcListener() error {
+	log.Println("Starting RPC server on port: ", rpcPort)
+
+	listen, err := net.Listen("tcp", "0.0.0.0:"+rpcPort)
+	if err != nil {
+		return err
+	}
+	defer listen.Close()
+
+	for {
+		conn, err := listen.Accept()
+		if err != nil {
+			log.Println("error accepting connection: ", err)
+			continue
+		}
+
+		go rpc.ServeConn(conn)
+	}
 }
