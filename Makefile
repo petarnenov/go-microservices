@@ -29,30 +29,40 @@ down:
 build_broker:
 	@echo "Building broker binary..."
 	cd ./broker-service && env GOOS=linux CGO_ENABLED=0 go build -o ${BROKER_BINARY} ./cmd/api
+	cd ./broker-service && docker build -f broker-service.dockerfile -t petarnenov/broker-service .
+	# docker push petarnenov/broker-service
 	@echo "Done!"
 
 ## build_listener: builds the listener binary as a linux executable
 build_listener:
 	@echo "Building listener binary..."
 	cd ./listener-service && env GOOS=linux CGO_ENABLED=0 go build -o ${LISTENER_BINARY} ./cmd/api
+	cd ./listener-service && docker build -f listener-service.dockerfile -t petarnenov/listener-service .
+	docker push petarnenov/listener-service
 	@echo "Done!"
 
 ## build_authentication: builds the authentication binary as a linux executable
 build_authentication:
 	@echo "Building authentication binary..."
 	cd ./authentication-service && env GOOS=linux CGO_ENABLED=0 go build -o ${AUTHENTICATION_BINARY} ./cmd/api
+	cd ./authentication-service && docker build -f authentication-service.dockerfile -t petarnenov/authentication-service .
+	docker push petarnenov/authentication-service
 	@echo "Done!"
 
-## build_logger: builds the logger binary as a linux executable
+## build_authentication: builds the logger binary as a linux executable
 build_logger:
 	@echo "Building logger binary..."
 	cd ./logger-service && env GOOS=linux CGO_ENABLED=0 go build -o ${LOGGER_BINARY} ./cmd/api
+	cd ./logger-service && docker build -f logger-service.dockerfile -t petarnenov/logger-service .
+	docker push petarnenov/logger-service
 	@echo "Done!"
 
 ## build_mail: builds the mail binary as a linux executable
 build_mail:
 	@echo "Building mail binary..."
 	cd ./mail-service && env GOOS=linux CGO_ENABLED=0 go build -o ${MAIL_BINARY} ./cmd/api
+	cd ./mail-service && docker build -f mail-service.dockerfile -t petarnenov/mail-service .
+	docker push petarnenov/mail-service
 	@echo "Done!"
 
 ## build_front: builds the front end binary
@@ -76,6 +86,17 @@ stop:
 restart: stop down up_build start
 	@echo "Restarted all!"
 
+## create docker swarm
+swarm_up:
+	docker swarm init
+	docker-compose up -d
+
+swarm_down:
+	docker swarm leave --force
+
 create_proto:
 	cd logger-service/logs
 	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative logs.proto
+
+deploy_stack:
+	docker stack deploy --compose-file docker-compose.yaml microservices

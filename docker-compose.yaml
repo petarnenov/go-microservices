@@ -4,7 +4,8 @@ services:
   broker-service:
     build:
       context: ./broker-service
-      dockerfile: ./brocker-service.dockerfile
+      dockerfile: ./broker-service.dockerfile
+    image: petarnenov/broker-service:latest
     restart: always
     ports:
       - "8080:80"
@@ -16,6 +17,7 @@ services:
     build:
       context: ./listener-service
       dockerfile: ./listener-service.dockerfile
+    image: petarnenov/listener-service:latest
     restart: always
     deploy:
       mode: replicated
@@ -25,6 +27,7 @@ services:
     build:
       context: ./authentication-service
       dockerfile: ./authentication-service.dockerfile
+    image: petarnenov/authentication-service:latest
     restart: always
     ports:
       - "8081:80"
@@ -38,6 +41,7 @@ services:
     build:
       context: ./logger-service
       dockerfile: ./logger-service.dockerfile
+    image: petarnenov/logger-service:latest
     restart: always
     deploy:
       mode: replicated
@@ -47,6 +51,7 @@ services:
     build:
       context: ./mail-service
       dockerfile: ./mail-service.dockerfile
+    image: petarnenov/mailer-service:latest
     restart: always
     deploy:
       mode: replicated

@@ -6,7 +6,7 @@
             <div class="col">
                 <h1 class="mt-5">Test microservices</h1>
                 <hr>
-                <a id="brockerBtn" class="btn btn-outline-secondary" href="javascript:void(0);" role="button">Test Broker</a>
+                <a id="brokerBtn" class="btn btn-outline-secondary" href="javascript:void(0);" role="button">Test Broker</a>
                 <a id="authBtn" class="btn btn-outline-secondary" href="javascript:void(0);" role="button">Test Auth</a>
                 <a id="logBtn" class="btn btn-outline-secondary" href="javascript:void(0);" role="button">Test Log</a>
                 <a id="grpcBtn" class="btn btn-outline-secondary" href="javascript:void(0);" role="button">Test Log gRPC</a>
@@ -36,7 +36,7 @@
 {{define "js"}}
     <script>
 
-    const brockerBtn = document.getElementById('brockerBtn')
+    const brokerBtn = document.getElementById('brokerBtn')
     const authBtn = document.getElementById('authBtn')
     const logBtn = document.getElementById('logBtn')
     const gRPCBtn = document.getElementById('grpcBtn')
@@ -73,7 +73,7 @@
                console.error(data.message)
                output.innerHTML = `<br><strong>Response from auth service</strong> ${data.message}`;
             }else{
-            output.innerHTML = `<br><strong>Response from brocker service</strong> ${data.message}`;
+            output.innerHTML = `<br><strong>Response from broker service</strong> ${data.message}`;
             }
         })
         .catch(err => {
@@ -108,7 +108,7 @@
                console.error(data.message)
                output.innerHTML = `<br><strong>Response from log service</strong> ${data.message}`;
             }else{
-            output.innerHTML = `<br><strong>Response from brocker service</strong> ${data.message}`;
+            output.innerHTML = `<br><strong>Response from broker service</strong> ${data.message}`;
             }
         })
         .catch(err => {
@@ -143,7 +143,7 @@
                console.error(data.message)
                output.innerHTML = `<br><strong>Response from log service</strong> ${data.message}`;
             }else{
-            output.innerHTML = `<br><strong>Response from brocker service</strong> ${data.message}`;
+            output.innerHTML = `<br><strong>Response from broker service</strong> ${data.message}`;
             }
         })
         .catch(err => {
@@ -151,7 +151,7 @@
         })
     })
 
-    brockerBtn.addEventListener('click', () => {
+    brokerBtn.addEventListener('click', () => {
         output.innerHTML = 'Loading...'
 
         fetch("http:\/\/localhost:8080", {
@@ -164,7 +164,7 @@
             if(data.error) {
                console.error(data.message)
             }else{
-            output.innerHTML = `<br><strong>Response from brocker service</strong> ${data.message}`;
+            output.innerHTML = `<br><strong>Response from broker service</strong> ${data.message}`;
             }
         })
         .catch(err => {
@@ -198,7 +198,7 @@
                console.error(data.message)
                output.innerHTML = `<br><strong>Response from auth service</strong> ${data.message}`;
             }else{
-            output.innerHTML = `<br><strong>Response from brocker service</strong> ${data.message}`;
+            output.innerHTML = `<br><strong>Response from broker service</strong> ${data.message}`;
             }
         })
         .catch(err => {
