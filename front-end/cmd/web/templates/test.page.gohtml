@@ -58,7 +58,7 @@
             }
         }
 
-        fetch("http:\/\/backend/handle", {
+        fetch({{print .BrokerURL "/handle"}}, {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -93,7 +93,7 @@
             }
         }
 
-        fetch("http:\/\/backend/log-grpc", {
+        fetch({{print .BrokerURL "/log-grpc"}}, {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -128,7 +128,7 @@
             }
         }
 
-        fetch("http:\/\/backend/handle", {
+        fetch({{print .BrokerURL "/handle"}}, {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -154,7 +154,7 @@
     brokerBtn.addEventListener('click', () => {
         output.innerHTML = 'Loading...'
 
-        fetch("http:\/\/backend", {
+        fetch({{.BrokerURL}}, {
             method: 'POST'
         })
         .then(res => res.json())
@@ -183,7 +183,7 @@
             }
         }
 
-        fetch("http:\/\/backend/handle", {
+        fetch({{print .BrokerURL "/handle"}}, {
             headers: {
                 'Content-Type': 'application/json'
             },

@@ -131,6 +131,8 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+    environment:
+      BROKER_URL: "http://backend"
 
   caddy:
     build:
