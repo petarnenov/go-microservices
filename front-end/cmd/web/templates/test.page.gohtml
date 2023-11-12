@@ -9,6 +9,7 @@
                 <a id="brockerBtn" class="btn btn-outline-secondary" href="javascript:void(0);" role="button">Test Broker</a>
                 <a id="authBtn" class="btn btn-outline-secondary" href="javascript:void(0);" role="button">Test Auth</a>
                 <a id="logBtn" class="btn btn-outline-secondary" href="javascript:void(0);" role="button">Test Log</a>
+                <a id="grpcBtn" class="btn btn-outline-secondary" href="javascript:void(0);" role="button">Test Log gRPC</a>
                 <a id="mailBtn" class="btn btn-outline-secondary" href="javascript:void(0);" role="button">Test Mail</a>
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
@@ -38,6 +39,7 @@
     const brockerBtn = document.getElementById('brockerBtn')
     const authBtn = document.getElementById('authBtn')
     const logBtn = document.getElementById('logBtn')
+    const gRPCBtn = document.getElementById('grpcBtn')
     const mailBtn = document.getElementById('mailBtn')
     const output = document.getElementById('output')
     const sent = document.getElementById('payload')
@@ -79,7 +81,42 @@
         })
     })
 
-    logBtn.addEventListener('click', ()=>{
+    grpcBtn.addEventListener('click', ()=>{
+    
+        output.innerHTML = 'Loading...'
+
+        payload = {
+            action : "log",
+            log: {
+                name: "event",
+                data: "some kind of gRPC data"
+            }
+        }
+
+        fetch("http:\/\/localhost:8080/log-grpc", {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            sent.innerHTML = JSON.stringify(payload, null, 2)
+            received.innerHTML = JSON.stringify(data, null, 2)
+            if(data.error) {
+               console.error(data.message)
+               output.innerHTML = `<br><strong>Response from log service</strong> ${data.message}`;
+            }else{
+            output.innerHTML = `<br><strong>Response from brocker service</strong> ${data.message}`;
+            }
+        })
+        .catch(err => {
+            output.innerHTML = err.message
+        })
+    })
+
+     logBtn.addEventListener('click', ()=>{
     
         output.innerHTML = 'Loading...'
 
