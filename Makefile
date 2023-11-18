@@ -80,6 +80,12 @@ build_caddy:
 	docker push petarnenov/caddy
 	@echo "Done!"
 
+build_caddy_prod:
+	@echo "Building caddy..."
+	docker build -f caddy.production.dockerfile -t petarnenov/caddy .
+	docker push petarnenov/caddy
+	@echo "Done!"
+
 ## start: starts the front end
 start: build_front
 	@echo "Starting front end"
